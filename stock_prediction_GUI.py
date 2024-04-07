@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit
-import algo_file  # Import the separate algorithmic trading module
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QTextEdit
+import stock_prediction_algo  # import the separate algorithmic module
 
 class AlgoTraderGUI(QWidget):
     def __init__(self):
@@ -10,7 +10,6 @@ class AlgoTraderGUI(QWidget):
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
-        # Input fields for symbol, dates, and budget
         self.symbol_label = QLabel("Stock Symbol:")
         self.symbol_input = QLineEdit()
         self.from_date_label = QLabel("From Date (YYYY-MM-DD):")
@@ -20,15 +19,12 @@ class AlgoTraderGUI(QWidget):
         self.budget_label = QLabel("Initial Budget:")
         self.budget_input = QLineEdit()
 
-        # Button to run the strategy
         self.run_button = QPushButton("Run Strategy (Backtest)")
         self.run_button.clicked.connect(self.run_strategy)
 
-        # Output area for results
         self.output_label = QLabel("Strategy Results:")
         self.output_text = QTextEdit(readOnly=True)
 
-        # Add elements to layout
         self.layout.addWidget(self.symbol_label)
         self.layout.addWidget(self.symbol_input)
         self.layout.addWidget(self.from_date_label)
@@ -45,7 +41,7 @@ class AlgoTraderGUI(QWidget):
         self.show()
 
     def run_strategy(self):
-        # Get user input
+        # user input
         symbol = self.symbol_input.text()
         from_date = self.from_date_input.text()
         to_date = self.to_date_input.text()
@@ -55,11 +51,10 @@ class AlgoTraderGUI(QWidget):
             self.output_text.setText("Invalid budget format. Please enter a number.")
             return
 
-        # Clear previous output
         self.output_text.clear()
 
-        # Create an instance of the AlgorithmicTrader class (backtest mode)
-        trader = algo_file.AlgorithmicTrader(symbol, from_date, to_date, initial_budget)
+        # create instance of AlgorithmicTrader 
+        trader = stock_prediction_algo.AlgorithmicTrader(symbol, from_date, to_date, initial_budget)
         trader.initialize_data()
         trader.calculate_moving_averages()
         trader.identify_golden_cross()
@@ -67,12 +62,12 @@ class AlgoTraderGUI(QWidget):
         trader.execute_trades()
         final_value = trader.evaluate_strategy()
 
-        # Display results
+        # results
         output_text = f"Final Value: ${final_value:.2f}\n"
         output_text += f"Profit/Loss: ${final_value - initial_budget:.2f}"
         self.output_text.setText(output_text)
 
-# Create the application and run the GUI
+# create and run the GUI
 if __name__ == '__main__':
     app = QApplication([])
     window = AlgoTraderGUI()
